@@ -1,6 +1,6 @@
 # LILI - Linguistic Innovation Location-Inference 
 ### Project in the course GEO885 - GIS Projects
-#### Department of Geogrpahy - [University of Zurich](https://github.com/uzh)
+#### Department of Geography - [University of Zurich](https://github.com/uzh)
 Conducted by [Linus Rüegg](https://github.com/thereallinusrg) and [Eric Tharmlingam](https://github.com/etharm)
 Mentored by Carlota de Benito Moreno and Peter Ranacher
 
