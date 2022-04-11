@@ -1,7 +1,7 @@
 # Micromamba environment file
 # https://marketplace.visualstudio.com/items?itemName=corker.vscode-micromamba
 
-name: default
+name: LILI-Env
 
 channels:
   - conda-forge
@@ -14,3 +14,7 @@ dependencies:
   - pytest-check-links
   - python
   - yarn
+  - pandas
+  - geopandas
+  - dask
+  - fastparquet
