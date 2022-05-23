@@ -45,7 +45,32 @@ def process_geocodedtwitter_data(df, zone = 'country_y', inno_choose=inno_choose
     
     return df
 
+def DayExpander(df):
+    df_perm = pd.DataFrame()
+    idprev = 0
+
+    for idx, data in df.groupby(level=0):
+        new = df.loc[idx]
+        if idprev != 0:
+            old = df_perm.loc[idprev]
+            join = old.append(new)
+
+        else:
+            join = new
+        
+        join['date'] = idx
+        join.set_index('date', append=True, inplace=True)
+        join = join.reorder_levels(['date', 'twitter_id'])
+
+        df_perm = df_perm.append(join)
+        
+    
+        idprev = idx
+        
+    return(df_perm)
+
 df = process_geocodedtwitter_data(df)
+df = DayExpander(df) #This is an iterative process, it takes a while
 
 days = df.index.levels[0].tolist()
 
