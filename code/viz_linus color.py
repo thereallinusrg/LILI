@@ -25,31 +25,23 @@ df['date'] = pd.to_datetime(df['created_at']).dt.date
 zone = 'country_y'
 def process_geocodedtwitter_data(df, zone = 'country_y', inno_choose=inno_choose):
 
-    # Choose Innovation
+     # Choose Innovation
     df = df[df.inno_nr == inno_choose]
     df = df.reset_index()
 
-    # Saving countries positions (latitude and longitude per subzones)
-    country_position = df[[f'{zone}', 'lat', 'lng']].drop_duplicates([f'{zone}']).set_index([f'{zone}'])
-
-    # Pivoting per category
-    cats = list(df.inno_nr.unique())
-    cats.sort()
-    
-    df = pd.pivot_table(df, values='innoint', index=['date', f'{zone}'], columns=['inno_nr'])
-    df.columns = cats
-
-    # Merging locations after pivoting
-    df = df.join(country_position)
-
+    # Set Index to date (day) and tweet id
+    df= df.set_index(['date', 'twitter_id']) 
+   
     # Filling nan values with 0
     df = df.fillna(0)
 
     # Compute bubble sizes
-    df['size'] = df[inno_choose]
+    df['size'] = 10 #df[inno_choose]
 
     # Compute bubble color
-    df['color'] = 'fuchsia' #df[cats].sum(axis=1)
+    N = len(df)
+    HSL_tuples = [f'hsl({int(x*350.0/N)}, 50%, 50%)' for x in range(N)] 
+    df['color'] = HSL_tuples 
     
     return df
 
