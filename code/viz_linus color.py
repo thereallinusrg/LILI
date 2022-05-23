@@ -36,11 +36,11 @@ def process_geocodedtwitter_data(df, zone = 'country_y', inno_choose=inno_choose
     df = df.fillna(0)
 
     # Compute bubble sizes
-    df['size'] = 10 #df[inno_choose]
+    df['size'] = 3 #df[inno_choose]
 
     # Compute bubble color
     N = len(df)
-    HSL_tuples = [f'hsl({int(x*350.0/N)}, 50%, 50%)' for x in range(N)] 
+    HSL_tuples = [f'hsl({int(x*100.0/N)}, 50%, 50%)' for x in range(N)] 
     df['color'] = HSL_tuples 
     
     return df
