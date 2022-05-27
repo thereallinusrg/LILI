@@ -1,7 +1,7 @@
 ##############################
 #
 # Choose Inno Nr Here:
-inno_choose = 'inno_23'
+inno_choose = 'inno_31'
 single_color = True
 #
 #
@@ -147,7 +147,7 @@ layout = go.Layout(
     mapbox={
         'accesstoken':mapbox_token,
         'center':{'lat':7, 'lon':-33},
-        'zoom':1.7,
+        'zoom':2.5,
         'style':"carto-darkmatter",
         
     }
