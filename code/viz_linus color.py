@@ -1,7 +1,8 @@
 ##############################
 #
 # Choose Inno Nr Here:
-inno_choose = 'inno_08'
+inno_choose = 'inno_23'
+single_color = True
 #
 #
 ##############################
@@ -11,6 +12,10 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 import configparser as configparser
+
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 config = configparser.ConfigParser()
 config.read('/home/linusrg/Code/LILI/config.ini')
@@ -25,23 +30,32 @@ df['date'] = pd.to_datetime(df['created_at']).dt.date
 zone = 'country_y'
 def process_geocodedtwitter_data(df, zone = 'country_y', inno_choose=inno_choose):
 
-     # Choose Innovation
+    # Choose Innovation
     df = df[df.inno_nr == inno_choose]
     df = df.reset_index()
 
-    # Set Index to date (day) and tweet id
     df= df.set_index(['date', 'twitter_id']) 
-   
+
+    df = df[['lat', 'lng', 'created_at']].copy()
+
     # Filling nan values with 0
-    df = df.fillna(0)
+    df = df.dropna()
 
     # Compute bubble sizes
     df['size'] = 3 #df[inno_choose]
 
     # Compute bubble color
-    N = len(df)
-    HSL_tuples = [f'hsl({int(x*100.0/N)}, 50%, 50%)' for x in range(N)] 
-    df['color'] = HSL_tuples 
+    if single_color == True:
+        df['color'] = 'fuchsia'
+    else:
+        df["created_at_int"] = pd.to_datetime(df['created_at'])
+        df["time_int"] = df["created_at_int"].apply(lambda x:x.toordinal())
+
+        norm = matplotlib.colors.Normalize(vmin= df["time_int"].min(),vmax= df["time_int"].max(), clip=True)
+        mapper = plt.cm.ScalarMappable(norm=norm, cmap=plt.cm.viridis) #viridis can be changed for other color palette
+        df['color']  = df["time_int"].apply(lambda x: mcolors.to_hex(mapper.to_rgba(x)))
+
+  
     
     return df
 
@@ -52,9 +66,8 @@ def DayExpander(df):
     for idx, data in df.groupby(level=0):
         new = df.loc[idx]
         if idprev != 0:
-            old = df_perm.loc[idprev]
-            join = old.append(new)
-
+            old = df_perm.loc[idprev] 
+            join = pd.concat([old, new])
         else:
             join = new
         
@@ -62,7 +75,7 @@ def DayExpander(df):
         join.set_index('date', append=True, inplace=True)
         join = join.reorder_levels(['date', 'twitter_id'])
 
-        df_perm = df_perm.append(join)
+        df_perm = pd.concat([df_perm, join])
         
     
         idprev = idx
@@ -82,7 +95,7 @@ frames = [{
         'lon':df.xs(day)['lng'],
         'marker':go.scattermapbox.Marker(
             size=df.xs(day)['size']*3,
-            color=df.xs(day)['color'],
+            color= df.xs(day)['color'],
             showscale=False,
             #colorbar={'title':'Innovations', 'titleside':'top', 'thickness':4, 'tickprefix':' Inno Nr.: '},
         )#,
@@ -135,7 +148,7 @@ layout = go.Layout(
         'accesstoken':mapbox_token,
         'center':{'lat':7, 'lon':-33},
         'zoom':1.7,
-        'style':"open-street-map",
+        'style':"carto-darkmatter",
         
     }
 )

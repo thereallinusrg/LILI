@@ -1,7 +1,7 @@
 ##############################
 #
 # Choose Inno Nr Here:
-inno_choose = 'inno_08'
+inno_choose = 'inno_23'
 #
 #
 ##############################
@@ -46,7 +46,7 @@ def process_geocodedtwitter_data(df, zone = 'country_y', inno_choose=inno_choose
     df = df.fillna(0)
 
     # Compute bubble sizes
-    df['size'] = df[inno_choose]
+    df['size'] = 3#df[inno_choose]
 
     # Compute bubble color
     df['color'] = 'fuchsia' #df[cats].sum(axis=1)
@@ -118,7 +118,7 @@ layout = go.Layout(
         'accesstoken':mapbox_token,
         'center':{'lat':7, 'lon':-33},
         'zoom':1.7,
-        'style':"open-street-map",
+        'style':"carto-darkmatter",
         
     }
 )
